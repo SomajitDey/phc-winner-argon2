@@ -48,18 +48,18 @@ endif
 CI_CFLAGS := $(CFLAGS) -Werror=declaration-after-statement -D_FORTIFY_SOURCE=2 \
 				-Wextra -Wno-type-limits -Werror -coverage -DTEST_LARGE_RAM
 
-OPTTARGET ?= native
-OPTTEST := $(shell $(CC) -Iinclude -Isrc -march=$(OPTTARGET) src/opt.c -c \
-			-o /dev/null 2>/dev/null; echo $$?)
+#OPTTARGET ?= native
+#OPTTEST := $(shell $(CC) -Iinclude -Isrc -march=$(OPTTARGET) src/opt.c -c \
+#			-o /dev/null 2>/dev/null; echo $$?)
 # Detect compatible platform
-ifneq ($(OPTTEST), 0)
-$(info Building without optimizations)
+#ifneq ($(OPTTEST), 0)
+$(info Building without platform-specific optimizations)
 	SRC += src/ref.c
-else
-$(info Building with optimizations for $(OPTTARGET))
-	CFLAGS += -march=$(OPTTARGET)
-	SRC += src/opt.c
-endif
+#else
+#$(info Building with optimizations for $(OPTTARGET))
+# 	CFLAGS += -march=$(OPTTARGET)
+#	SRC += src/opt.c
+#endif
 
 BUILD_PATH := $(shell pwd)
 KERNEL_NAME := $(shell uname -s)
@@ -172,7 +172,7 @@ all: $(RUN) libs
 libs: $(LIBRARIES) $(PC_NAME)
 
 $(RUN):	        $(SRC) $(SRC_RUN)
-		$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+		$(CC) -static $(CFLAGS) $(LDFLAGS) $^ -o $@
 
 $(BENCH):       $(SRC) $(SRC_BENCH)
 		$(CC) $(CFLAGS) $^ -o $@
